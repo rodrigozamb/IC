@@ -1,21 +1,24 @@
 #include<bits/stdc++.h>
+#include<math.h>
 using namespace std;
 
+long double a,b;
 
 typedef struct bit{
     int cadeia[4];
 }Bit;
 
-int binTOdec(Bit a){
-    int sum=0;
-    if(a.cadeia[0]==1)sum+=pow(2,3);
-    if(a.cadeia[1]==1)sum+=pow(2,2);
-    if(a.cadeia[2]==1)sum+=pow(2,1);
-    if(a.cadeia[3]==1)sum+=1;
-    return sum;
+long double binTOdec(Bit aa){
+    double sum=0;
+    if(aa.cadeia[0]==1)sum+=pow(2,3);
+    if(aa.cadeia[1]==1)sum+=pow(2,2);
+    if(aa.cadeia[2]==1)sum+=pow(2,1);
+    if(aa.cadeia[3]==1)sum+=1;
+
+    return ((b - a) * sum) /  (pow(2,4)- 1) + a;
 }
 
-int avalia(int x){
+long double avalia(long double x){
     return x*x;
 }
 
@@ -76,8 +79,8 @@ void mutacao(vector<Bit> &filho){
 
 }
 
-bool meuSort(Bit a,Bit b){
-    return avalia(binTOdec(a))>avalia(binTOdec(b));
+bool meuSort(Bit aaa,Bit bbb){
+    return avalia( binTOdec(aaa)) > avalia(binTOdec(bbb));
 }
 
 void mostraPopulacao(vector<Bit>colonia){
@@ -87,11 +90,13 @@ void mostraPopulacao(vector<Bit>colonia){
                 cout<<colonia[i].cadeia[j];
                 if(j<3)cout<<",";
             }
-            cout<<"] - dec = "<<binTOdec(colonia[i])<<" - nota :"<<100 - avalia(binTOdec(colonia[i]))<<endl;
+            cout<<"] - X = "<<fixed<<setprecision(3)<<binTOdec(colonia[i])<<" - Y ="<<avalia(binTOdec(colonia[i]))<<endl;
         }
 }
 
 int main(){
+    a=-10.00;
+    b=10.00;
     int nmr;
     cout<<"Digite a qnt de indivíduos da colonia"<<endl;
     cin>>nmr;
@@ -99,13 +104,13 @@ int main(){
     srand (time(NULL));
 
     vector<Bit> colonia;
-    Bit a;
+    Bit p;
     srand (time(NULL));
     for(int i=0;i<nmr;i++){
         for(int j=0;j<4;j++){
-            a.cadeia[j]=rand()%2;
+            p.cadeia[j]=rand()%2;
         }
-        colonia.push_back(a);
+        colonia.push_back(p);
     }
     int ger=10;
 
@@ -119,7 +124,7 @@ int main(){
                 cout<<colonia[i].cadeia[j];
                 if(j<3)cout<<",";
             }
-            cout<<"] - dec = "<<binTOdec(colonia[i])<<" - nota :"<<100 - avalia(binTOdec(colonia[i]))<<endl;
+            cout<<"] - dec = "<<binTOdec(colonia[i],a,b)<<" - nota :"<<100 - avalia(binTOdec(colonia[i],a,b))<<endl;
         }
     */
 
@@ -135,7 +140,7 @@ int main(){
                 cout<<filho[i].cadeia[j];
                 if(j<3)cout<<",";
             }
-            cout<<"] - dec = "<<binTOdec(filho[i])<<" - nota :"<<100 - avalia(binTOdec(filho[i]))<<endl;
+            cout<<"] - X = "<<binTOdec(filho[i],a,b)<<" - Y = "<<avalia(binTOdec(filho[i],a,b))<<endl;
         }
         */
         mutacao(filho);
@@ -148,7 +153,7 @@ int main(){
                 cout<<filho[i].cadeia[j];
                 if(j<3)cout<<",";
             }
-            cout<<"] - dec = "<<binTOdec(filho[i])<<" - nota :"<<100 - avalia(binTOdec(filho[i]))<<endl;
+            cout<<"] - dec = "<<binTOdec(filho[i],a,b)<<" - nota :"<<100 - avalia(binTOdec(filho[i],a,b))<<endl;
         }
         */
 
@@ -165,7 +170,7 @@ int main(){
                 cout<<colonia[i].cadeia[j];
                 if(j<3)cout<<",";
             }
-            cout<<"] - dec = "<<binTOdec(colonia[i])<<" - nota :"<<100 - avalia(binTOdec(colonia[i]))<<endl;
+            cout<<"] - X = "<<binTOdec(colonia[i],a,b)<<" - Y :"<<avalia(binTOdec(colonia[i],a,b))<<endl;
         }
     */
         colonia.erase(colonia.begin(),colonia.begin()+(int)(nmr/4));
@@ -178,7 +183,7 @@ int main(){
                 cout<<colonia[i].cadeia[j];
                 if(j<3)cout<<",";
             }
-            cout<<"] - dec = "<<binTOdec(colonia[i])<<" - nota :"<<100 - avalia(binTOdec(colonia[i]))<<endl;
+            cout<<"] - X = "<<binTOdec(colonia[i],a,b)<<" - Y = "<<avalia(binTOdec(colonia[i],a,b))<<endl;
         }
         */
     }
