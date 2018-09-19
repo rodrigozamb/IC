@@ -88,19 +88,23 @@ void selecao(vector<Individuo> &colonia,Individuo *a,Individuo *b){
     float B = LO + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI-LO)));
 
     for(int i=0;i<nmrsEmX;i++){
-        float resp1,resp2;
+        float resp1=11.11,resp2=11.11;
 
         resp1 = colonia[p1].cadeia[i] + B*(colonia[p2].cadeia[i] - colonia[p1].cadeia[i]);
+        if(resp1 > 10.00 || resp1 < -5.00)resp1= max(colonia[p1].cadeia[i],colonia[p2].cadeia[i]);
         char n[20];
         sprintf(n, "%.3f", resp1);
         resp1 = atof(n);
         f1.cadeia[i]=resp1;
 
+
         resp2 = colonia[p2].cadeia[i] + B*(colonia[p1].cadeia[i] - colonia[p2].cadeia[i]);
+        if(resp2 > 10.00 || resp2 < -5.00)resp2= max(colonia[p1].cadeia[i],colonia[p2].cadeia[i]);
         char m[20];
         sprintf(m, "%.3f", resp2);
         resp2 = atof(m);
         f2.cadeia[i]=resp2;
+
 
     }
     mutar(&f1);
@@ -137,7 +141,7 @@ int main(){
 
 
 
-    int g=1000;
+    int g=3000;
     while(g--){
         Individuo i1,i2;
         selecao(colonia,&i1,&i2);
