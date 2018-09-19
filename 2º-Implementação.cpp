@@ -1,7 +1,7 @@
 #include<bits/stdc++.h>
 #include<math.h>
 using namespace std;
-#define Ngama 0.01
+#define Ngama 0.2
 #define nmrsEmX 5
 long double a,b;
 
@@ -41,7 +41,6 @@ float funcaoY(Individuo ser){
     return sum;
 }
 
-
 void mostraPopulacao(vector<Individuo>colonia){
     for(int i=0;i<colonia.size();i++){
             cout<<"Individuo["<<i<<"] = [";
@@ -49,11 +48,11 @@ void mostraPopulacao(vector<Individuo>colonia){
                 cout<<colonia[i].cadeia[j];
                 if(j<nmrsEmX-1)cout<<" , ";
             }
-            cout<<"] - Y = "<<funcaoY(colonia[i])<<endl;
+            cout<<"] - Y = ";
+            printf("%.3lf\n",funcaoY(colonia[i]));
         }
 
 }
-
 
 void mutar(Individuo *a){
     float LO = -Ngama;
@@ -110,7 +109,6 @@ void selecao(vector<Individuo> &colonia,Individuo *a,Individuo *b){
     colonia.push_back(f2);
 }
 
-
 bool meuSort(Individuo a,Individuo b){
 
     return funcaoY(a)>funcaoY(b);
@@ -139,7 +137,7 @@ int main(){
 
 
 
-    int g=3000;
+    int g=1000;
     while(g--){
         Individuo i1,i2;
         selecao(colonia,&i1,&i2);
