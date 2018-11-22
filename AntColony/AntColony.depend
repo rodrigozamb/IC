@@ -1,0 +1,17 @@
+# depslib dependency file v1.0
+1542915227 source:c:\users\rodrigo\desktop\ic\antcolony\antcolony.cpp
+	"AntColony.h"
+	<iostream>
+	<cstdlib>
+	<ctime>
+	<random>
+	<math.h>
+	<bits/stdc++.h>
+
+1542914452 source:c:\users\rodrigo\desktop\ic\antcolony\main.cpp
+	<bits/stdc++.h>
+	"AntColony.h"
+
+1542908258 c:\users\rodrigo\desktop\ic\antcolony\antcolony.h
+	<bits/stdc++.h>
+
