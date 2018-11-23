@@ -80,9 +80,7 @@ void libera_grafo(Grafo **G){
 
 }
 
-
-int insere_arestaN(Grafo *G,int v1,int v2,float peso)
-{
+int insere_arestaN(Grafo *G,int v1,int v2,float peso){
     if(G==NULL || (v1<0 || v2<0)){
         return -1;
     }
@@ -136,8 +134,7 @@ int insere_arestaN(Grafo *G,int v1,int v2,float peso)
     return 1;
 }
 
-void mostra_grafo(Grafo *G)
-{
+void mostra_grafo(Grafo *G){
     if(G==NULL)
     {
         printf("Grafo não existe");
@@ -218,26 +215,23 @@ void DPS(Grafo *gr,int v){
 
 }
 
-
-void ACO(Grafo *G,int v,float **m,vector<int> &caminho)
-{
+void ACO(Grafo *G,int v,float **m,vector<int> &caminho){
 
     int *visitados,pos=0;
 
     visitados=(int*)calloc(G->qtde_vertices,sizeof(int));
 
     busca_formiga(G,v,m,visitados,v,pos,caminho);
+    caminho.push_back(v);
 
-    /*
     cout<<"caminho : \n";
     for(int i=0;i<caminho.size();i++){
         cout<<caminho[i]<<" ";
     }
     cout<<endl;
 
-    */
-}
 
+}
 
 float geraFloat(float m){
 
@@ -245,7 +239,6 @@ float geraFloat(float m){
     float r = (rand() / (float)RAND_MAX * HI) + LO;
     return r;
 }
-
 
 No* sorteio_triplo(Grafo *G,int v,float** m,int *visitados){
     No *aux0;
@@ -303,9 +296,7 @@ No* sorteio_triplo(Grafo *G,int v,float** m,int *visitados){
     return aux1;
 }
 
-
-float CalculaProbabilidade(Grafo *G,float** m,int v1,int v2)
-{
+float CalculaProbabilidade(Grafo *G,float** m,int v1,int v2){
 
     No *aux;
     float p=0,f1=0,f2=0;
@@ -343,15 +334,9 @@ float floatrand(){
     return r;
 }
 
-
-
-
-
-
-
 void busca_formiga(Grafo *G,int v,float **m,int *visitados,int f,int pos,vector <int> &caminho){
      // 'v'-> vertice inicial   'F'-> vertice final
-    /*
+  /*
     if(pos==G->qtde_vertices-1){
 
         //tenho que pegar o primeiro do vector
@@ -363,36 +348,49 @@ void busca_formiga(Grafo *G,int v,float **m,int *visitados,int f,int pos,vector 
     else{
         visitados[v] = 1;
     }
-    */
 
-    if(pos == G->qtde_vertices-1)
-    {
-        visitados[f]=0;
-        visitados[v]=1;
-    }
-    else
-    {
-        visitados[v] = 1;
-    }
-
+*/
+    visitados[v] = 1;
 
     caminho.push_back(v);
-    printf("  %d  ",v);
+    //printf("  %d  ",v);
 
     No *aux;
     aux=G->aresta[v];
-    if(aux!=NULL)cout<<"nao eh null"<<endl;
-    while(aux!=NULL)
+
+    while(aux!=NULL && visitados[aux->vertice]!=1)
     {
         No* aux2 = sorteio_triplo(G,v,m,visitados);
-        printf("vertice escolhido %d\n",aux2->vertice);
-
-        if(aux2 != NULL)
-        {
-            busca_formiga(G,aux2->vertice,m,visitados,f,pos+1,caminho);
-        }
+        if(visitados[aux2->vertice]==0)busca_formiga(G,aux2->vertice,m,visitados,f,pos+1,caminho);
 
         aux=aux->prox;
     }
 
 }
+
+float valorCaminho(Grafo *G,vector<int>caminho){
+    float dist=0.0;
+    for(int i=0;i<caminho.size()-1;i++){
+        dist+=achaDist(G,caminho[i],caminho[i+1]);
+    }
+    return dist;
+}
+
+float achaDist(Grafo *G,int v1,int v2){
+
+        No* aux = G->aresta[v1];
+        while(aux->vertice!=v2 && aux!=NULL)aux = aux->prox;
+        return aux->peso;
+}
+
+
+
+
+
+
+
+
+
+
+
+

@@ -36,6 +36,8 @@ void busca_formiga(Grafo *G,int v,float **m,int *visitados,int f,int pos,vector 
 float CalculaProbabilidade(Grafo *G,float** m,int v1,int v2);
 
 
+float valorCaminho(Grafo *G,vector<int>caminho);
+float achaDist(Grafo *G,int v1,int v2);
 
 
 
