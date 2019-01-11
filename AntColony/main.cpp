@@ -7,6 +7,10 @@ using namespace std;
 
 int main(){
 
+    srand(time(NULL));
+
+
+
     Grafo *G = cria_grafo(6);
     insere_arestaN(G,0,1,0.1);
     insere_arestaN(G,0,2,0.2);
@@ -25,19 +29,37 @@ int main(){
     insere_arestaN(G,4,5,4.5);
 
 
-    mostra_grafo(G);
-    //DPS(G,1);
     float **matriz;
-    matriz = cria_matriz(5,5);
+    matriz = cria_matriz(G->qtde_vertices,G->qtde_vertices);
+    //for(int i=0;i<G->qtde_vertices;i++)cout<<CalculaProbabilidade(G,matriz,1,i)<<endl;
 
-    vector<int> caminho;
+    int *visitados;
+    No* resp;
+    visitados =(int*)calloc(G->qtde_vertices,sizeof(int));
+    resp = sorteio_triplo(G,0,matriz,visitados);
+
+    cout<<"resp na main -- vert ganhador = "<<resp->vertice<<endl;
+
+    //DPS(G,0);
+/*
+  vector<int> caminho;
     printf("##### 0 #####\n");
     printf("Caminho Profundidade Comecando em 0: \n");
     ACO(G,4,matriz,caminho);
-    cout<<"tamanho do caminho : "<<endl <<valorCaminho(G,caminho)<<endl;
+*/
 
 
+/*
 
+    int *visitados,pos=0;
+         visitados=(int*)calloc(G->qtde_vertices,sizeof(int));
 
+    int g=20;
+    while(g--){
+            No * aux2= sorteio_triplo(G,0,matriz,visitados);
+            cout<<aux2->vertice<<endl;
+
+    }
+*/
 return 0;
 }

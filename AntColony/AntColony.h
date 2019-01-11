@@ -16,15 +16,33 @@ struct grafo
     int *grau;
     No**aresta;
 };
-
 typedef struct grafo Grafo;
 
 
+
+struct no2
+{
+    int vertice;
+    float peso;
+};
+typedef struct no2 No2;
+
+struct grafo2
+{
+    int qtde_vertices, qtde_arestas;
+    vector<int>grau;
+    vector< vector<No2> >aresta;
+};
+typedef struct grafo2 Grafo2;
+
+
 Grafo* cria_grafo(int ver);
+Grafo* cria_grafo2(int ver);
 float** cria_matriz(int L,int C);
 void libera_grafo(Grafo **G);
 void mostra_grafo(Grafo *G);
 int insere_arestaN(Grafo *G,int v1,int v2,float peso);
+int insere_arestaN2(Grafo *G,int v1,int v2,float peso);
 int verifica_aresta(Grafo *G,int v1,int v2);
 void busca_profundidade(Grafo *G,int v,int *visitados,vector<int> &caminho,int pos);
 void DPS(Grafo *gr,int v);
@@ -35,6 +53,9 @@ float geraFloat(float m);
 void busca_formiga(Grafo *G,int v,float **m,int *visitados,int f,int pos,vector <int> &caminho);
 float CalculaProbabilidade(Grafo *G,float** m,int v1,int v2);
 
+//----------------------------------------------------
+
+void buscaProfundidade(Grafo *gr, int ini, int *visitado, int cont);
 
 float valorCaminho(Grafo *G,vector<int>caminho);
 float achaDist(Grafo *G,int v1,int v2);

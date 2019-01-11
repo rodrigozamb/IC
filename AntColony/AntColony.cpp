@@ -55,6 +55,20 @@ Grafo* cria_grafo(int ver){
 
 }
 
+Grafo* cria_grafo2(int ver){
+    if(ver<=0)return NULL;
+
+    Grafo2 *gr = (Grafo2*)malloc(sizeof(Grafo2));
+    if(gr==NULL){
+        free(gr);
+        return NULL;
+    }
+
+    gr->qtde_vertices = ver;
+    gr->qtde_arestas = 0;
+
+}
+
 void libera_grafo(Grafo **G){
     if((*G)!=NULL)
     {
@@ -134,6 +148,23 @@ int insere_arestaN(Grafo *G,int v1,int v2,float peso){
     return 1;
 }
 
+int insere_arestaN2(Grafo2 *G,int v1,int v2,float peso){
+    No2 aux1,aux2;
+    aux1.peso = peso;
+    aux1.vertice = v2;
+
+    aux2.peso = peso;
+    aux2.vertice = v1;
+
+    G->aresta[v1].push_back(aux1);
+    G->aresta[v2].push_back(aux2);
+
+    G->grau[v1]++;
+    G->grau[v2]++;
+    G->qtde_arestas++;
+
+}
+
 void mostra_grafo(Grafo *G){
     if(G==NULL)
     {
@@ -164,6 +195,7 @@ int verifica_aresta(Grafo *G,int v1,int v2){
     {
         return -1;
     }
+
     No *aux;
     aux=G->aresta[v1];
     while(aux!=NULL && aux->vertice!=v2)
@@ -201,20 +233,6 @@ void busca_profundidade(Grafo *G,int v,int *visitados,vector<int> &caminho){
 
 }
 
-void DPS(Grafo *gr,int v){
-
-    int *visitados = (int*)calloc(gr->qtde_vertices,sizeof(int));
-    vector<int> caminho;
-
-    busca_profundidade(gr,v,visitados,caminho);
-
-    for(int i=0;i<gr->qtde_vertices;i++){
-        cout<<caminho[i]<<" ";
-    }
-    cout<<endl;
-
-}
-
 void ACO(Grafo *G,int v,float **m,vector<int> &caminho){
 
     int *visitados,pos=0;
@@ -241,44 +259,50 @@ float geraFloat(float m){
 }
 
 No* sorteio_triplo(Grafo *G,int v,float** m,int *visitados){
+    int i;
     No *aux0;
-    float ps[G->qtde_vertices];
-    int candidatos[G->qtde_vertices];
+    float ps[G->qtde_vertices]; // vetor das probabilidades / tamanha = nro de vertices do grafo
+    float candidatos[G->qtde_vertices];
+
     for(int p=0;p<G->qtde_vertices;p++){
         ps[p]=-1.0;
-        candidatos[p]=-1;
+        candidatos[p]=-1.0;
     }
 
     aux0 = G->aresta[v];
 
-    float t=1.0,tt=1.0;
-    while(aux0->prox!=NULL){
+    float som=0.0;
+    while(aux0 != NULL){
 
         if(visitados[(aux0->vertice)]==0){
+            //quando as posicões da matriz sao igual a 0 , dá errado
+            //ps[aux0->vertice] = CalculaProbabilidade(G,m,v,aux0->vertice);
 
-            ps[aux0->vertice] = geraFloat(tt);
-            t=ps[aux0->vertice];
+            ps[aux0->vertice] = floatrand();//CalculaProbabilidade(G,m,v,aux0->vertice);//;
+            som+=ps[aux0->vertice];
+            candidatos[aux0->vertice] = ps[aux0->vertice];
 
-            tt-=t;
-            candidatos[aux0->vertice]= aux0->vertice;
-
-
-            if(aux0->prox->prox==NULL){
-                ps[aux0->prox->vertice]=tt;
-                candidatos[aux0->prox->vertice] = aux0->prox->vertice;
-                break;
-            }
         }
+        else
+            ps[aux0->vertice] = 0.0;
+
         aux0= aux0->prox;
     }
 
+    sort(ps,ps+G->qtde_vertices);
+
     float x = geraFloat(1.0);
+
     int y=0;
-    int escolhido=0;
+    float escolhido=0.0;
+
     while(1){
+
         if(ps[y]!=-1.00){
-            if(x<=ps[y]){
-                escolhido=candidatos[y];
+            if(ps[y]>=x){
+                escolhido = ps[y];
+
+
                 break;
             }
             else{
@@ -290,16 +314,25 @@ No* sorteio_triplo(Grafo *G,int v,float** m,int *visitados){
             y++;
     }
 
+    int pos=0;
+    for(i=0;i<G->qtde_vertices;i++)
+        if(candidatos[i]==escolhido){
+            pos=i;
+        }
 
     No* aux1 = G->aresta[v];
-    while(aux1->vertice!=escolhido)aux1= aux1->prox;
+    while(aux1->vertice != pos){
+        aux1= aux1->prox;
+    }
+
     return aux1;
+
 }
 
 float CalculaProbabilidade(Grafo *G,float** m,int v1,int v2){
 
     No *aux;
-    float p=0,f1=0,f2=0;
+    float p=0.0,f1=0.0,f2=0.0;
     float a=floatrand(),b=floatrand();
 
     aux = G->aresta[v1];
@@ -308,89 +341,85 @@ float CalculaProbabilidade(Grafo *G,float** m,int v1,int v2){
     {
         if(aux->vertice == v2)
         {
-            f1 = pow(m[v1][v2],a)*pow(aux->peso,b);
+            f1 = pow(m[v1][v2],a)*pow(1.0/aux->peso,b);
         }
-        f2 += pow(m[v1][aux->vertice],a)*pow(aux->peso,b);
+        f2 += pow(m[v1][aux->vertice],a)*pow(1.0/aux->peso,b);
         aux = aux->prox;
     }
+    cout<<"bolo de pote"<<endl;
 
-    if(f2 == 0){
-        p = 0;
-    }else{
-
-    p = f1/f2;
-
-    }
-
+    if(f2 == 0)
+        p = 0.0;
+    else
+        p = f1/f2;
 
     return p;
-
 }
 
-float floatrand(){
-
-    float HI=1.0,LO=0.0;
-    float r = (rand() / (float)RAND_MAX * HI) + LO;
-    return r;
+int verificaA(int tam,int *visitados){
+    for(int i=0;i<tam;i++){
+        if(visitados[i]==0)return 0;
+    }
+    return 1;
 }
 
 void busca_formiga(Grafo *G,int v,float **m,int *visitados,int f,int pos,vector <int> &caminho){
      // 'v'-> vertice inicial   'F'-> vertice final
-  /*
-    if(pos==G->qtde_vertices-1){
-
-        //tenho que pegar o primeiro do vector
-        vector<int>::iterator it = caminho.begin();
-        cout<<*it<<endl;
-        visitados[*it]=0;
-        visitados[v]=1;
-    }
-    else{
-        visitados[v] = 1;
-    }
-
-*/
     visitados[v] = 1;
 
     caminho.push_back(v);
-    //printf("  %d  ",v);
 
     No *aux;
     aux=G->aresta[v];
 
-    while(aux!=NULL && visitados[aux->vertice]!=1)
+    while(verificaA((G->qtde_vertices-1),visitados)==0)
     {
-        No* aux2 = sorteio_triplo(G,v,m,visitados);
-        if(visitados[aux2->vertice]==0)busca_formiga(G,aux2->vertice,m,visitados,f,pos+1,caminho);
+        No* aux2;
+        do{
+            aux2 = sorteio_triplo(G,v,m,visitados);
+        }while(visitados[aux2->vertice]==1);
 
-        aux=aux->prox;
+        busca_formiga(G,aux2->vertice,m,visitados,f,pos+1,caminho);
     }
-
 }
 
-float valorCaminho(Grafo *G,vector<int>caminho){
-    float dist=0.0;
-    for(int i=0;i<caminho.size()-1;i++){
-        dist+=achaDist(G,caminho[i],caminho[i+1]);
+
+
+
+
+
+void buscaProfundidade(Grafo *G, int ini, int *visitado, int cont){
+
+    visitado[ini] = cont;
+    No *aux = G->aresta[ini];
+
+    while(aux != NULL){
+        if(visitado[aux->vertice] == -1)
+             buscaProfundidade(G,aux->vertice,visitado,cont+1);
+
+        aux = aux->prox;
     }
-    return dist;
 }
 
-float achaDist(Grafo *G,int v1,int v2){
+void DPS(Grafo *gr,int v){
 
-        No* aux = G->aresta[v1];
-        while(aux->vertice!=v2 && aux!=NULL)aux = aux->prox;
-        return aux->peso;
+    int *visitados = (int*)calloc(gr->qtde_vertices,sizeof(int));
+
+    for(int i=0;i<gr->qtde_vertices;i++)visitados[i]=-1;
+
+    buscaProfundidade(gr,v,visitados,0);
+    cout<<endl;
+
+    for(int i=0;i<gr->qtde_vertices;i++){
+        cout<<visitados[i]<<" ";
+    }
+    cout<<endl;
+
 }
 
 
-
-
-
-
-
-
-
-
-
-
+float floatrand(){
+    double HI=1.0,LO=0.0;
+    double r = (rand() / (double)RAND_MAX * HI) + LO;
+    return r;
+}
