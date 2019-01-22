@@ -52,7 +52,11 @@ float floatrand();
 float geraFloat(float m);
 void busca_formiga(Grafo *G,int v,float **m,int *visitados,int f,int pos,vector <int> &caminho);
 float CalculaProbabilidade(Grafo *G,float** m,int v1,int v2);
-
+void mostra_matriz(float **m,int n);
+bool ehCaminho(vector<int> caminho,int x,int y);
+void atualizaMatriz(vector< vector<int> > formigas, vector<float>valor_caminhos,float** matriz,int nro_vertices);
+void ACO_Geral(Grafo* G, float** mat);
+No* randomNo(Grafo* G,int v);
 //----------------------------------------------------
 
 void buscaProfundidade(Grafo *gr, int ini, int *visitado, int cont);

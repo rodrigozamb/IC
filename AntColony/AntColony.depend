@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1547194615 source:c:\users\rodrigo\desktop\ic\antcolony\antcolony.cpp
+1548181454 source:c:\users\rodrigo\desktop\ic\antcolony\antcolony.cpp
 	"AntColony.h"
 	<iostream>
 	<cstdlib>
@@ -8,10 +8,10 @@
 	<math.h>
 	<bits/stdc++.h>
 
-1547193403 source:c:\users\rodrigo\desktop\ic\antcolony\main.cpp
+1548070012 source:c:\users\rodrigo\desktop\ic\antcolony\main.cpp
 	<bits/stdc++.h>
 	"AntColony.h"
 
-1546674930 c:\users\rodrigo\desktop\ic\antcolony\antcolony.h
+1548181006 c:\users\rodrigo\desktop\ic\antcolony\antcolony.h
 	<bits/stdc++.h>
 

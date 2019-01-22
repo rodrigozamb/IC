@@ -17,6 +17,7 @@ float** cria_matriz(int L,int C){
         M[i] = (float*)calloc(C,sizeof(float));
         for(int j=0;j<C;j++)M[i][j]=0.0;
     }
+
     return M;
 }
 
@@ -239,16 +240,16 @@ void ACO(Grafo *G,int v,float **m,vector<int> &caminho){
 
     visitados=(int*)calloc(G->qtde_vertices,sizeof(int));
 
-    busca_formiga(G,v,m,visitados,v,pos,caminho);
-    caminho.push_back(v);
+    busca_formiga(G,v,m,visitados,v,pos,caminho); // O PRBLEMA VEM DE AQUI
 
+    caminho.push_back(v);
+/*
     cout<<"caminho : \n";
     for(int i=0;i<caminho.size();i++){
         cout<<caminho[i]<<" ";
     }
     cout<<endl;
-
-
+*/
 }
 
 float geraFloat(float m){
@@ -261,9 +262,10 @@ float geraFloat(float m){
 No* sorteio_triplo(Grafo *G,int v,float** m,int *visitados){
     int i;
     No *aux0;
-    float ps[G->qtde_vertices]; // vetor das probabilidades / tamanha = nro de vertices do grafo
+    float ps[G->qtde_vertices]; // vetor das probabilidades / tamanho = nro de vertices do grafo
     float candidatos[G->qtde_vertices];
 
+    // setando os vetores de probabilidade e de candidatos
     for(int p=0;p<G->qtde_vertices;p++){
         ps[p]=-1.0;
         candidatos[p]=-1.0;
@@ -275,18 +277,18 @@ No* sorteio_triplo(Grafo *G,int v,float** m,int *visitados){
     while(aux0 != NULL){
 
         if(visitados[(aux0->vertice)]==0){
-            //quando as posicões da matriz sao igual a 0 , dá errado
-            //ps[aux0->vertice] = CalculaProbabilidade(G,m,v,aux0->vertice);
 
-            ps[aux0->vertice] = floatrand();//CalculaProbabilidade(G,m,v,aux0->vertice);//;
+            ps[aux0->vertice] = CalculaProbabilidade(G,m,v,aux0->vertice);
+
             som+=ps[aux0->vertice];
             candidatos[aux0->vertice] = ps[aux0->vertice];
+
 
         }
         else
             ps[aux0->vertice] = 0.0;
 
-        aux0= aux0->prox;
+        aux0 = aux0->prox;
     }
 
     sort(ps,ps+G->qtde_vertices);
@@ -295,13 +297,12 @@ No* sorteio_triplo(Grafo *G,int v,float** m,int *visitados){
 
     int y=0;
     float escolhido=0.0;
-
     while(1){
 
         if(ps[y]!=-1.00){
+
             if(ps[y]>=x){
                 escolhido = ps[y];
-
 
                 break;
             }
@@ -321,11 +322,21 @@ No* sorteio_triplo(Grafo *G,int v,float** m,int *visitados){
         }
 
     No* aux1 = G->aresta[v];
-    while(aux1->vertice != pos){
-        aux1= aux1->prox;
+    while(aux1->vertice != pos && aux1->prox != NULL){ // ESSE aux1->prox != NULL CONCERTOU O PROBLEMA
+        aux1 = aux1->prox;
     }
 
     return aux1;
+
+}
+
+No* randomNo(Grafo* G,int v){
+
+    int a = rand() % G->qtde_vertices;
+    No* aux = G->aresta[v];
+    for(int i=0;i<a;i++)aux=aux->prox;
+
+    return aux;
 
 }
 
@@ -346,10 +357,10 @@ float CalculaProbabilidade(Grafo *G,float** m,int v1,int v2){
         f2 += pow(m[v1][aux->vertice],a)*pow(1.0/aux->peso,b);
         aux = aux->prox;
     }
-    cout<<"bolo de pote"<<endl;
 
-    if(f2 == 0)
-        p = 0.0;
+    if(f2 == 0.0)
+        //aqui ta dando merda pq n dá pra dividir por 0, , sugestao p = 1.0
+        p = 1.0;
     else
         p = f1/f2;
 
@@ -372,21 +383,19 @@ void busca_formiga(Grafo *G,int v,float **m,int *visitados,int f,int pos,vector 
     No *aux;
     aux=G->aresta[v];
 
-    while(verificaA((G->qtde_vertices-1),visitados)==0)
+    while(verificaA(G->qtde_vertices,visitados)==0)
     {
         No* aux2;
+
         do{
             aux2 = sorteio_triplo(G,v,m,visitados);
+
+
         }while(visitados[aux2->vertice]==1);
 
         busca_formiga(G,aux2->vertice,m,visitados,f,pos+1,caminho);
     }
 }
-
-
-
-
-
 
 void buscaProfundidade(Grafo *G, int ini, int *visitado, int cont){
 
@@ -417,9 +426,80 @@ void DPS(Grafo *gr,int v){
 
 }
 
-
 float floatrand(){
     double HI=1.0,LO=0.0;
     double r = (rand() / (double)RAND_MAX * HI) + LO;
     return r;
+}
+
+void mostra_matriz(float **m,int n){
+
+    for(int i=0;i<n;i++){
+        for(int j=0;j<n;j++){
+            //cout<<m[i][j]<<" ";
+            printf("%.3f ",m[i][j]);
+        }
+        cout<<endl;
+    }
+
+}
+
+float valorCaminho(Grafo* G,vector<int>caminho){
+    float total=0.0;
+
+    for(int i=0;i<caminho.size()-1;i++){
+
+        No* aux = G->aresta[caminho[i]];
+        while(aux->vertice != caminho[i+1])aux = aux->prox;
+        total += aux->peso;
+    }
+    return total;
+}
+
+bool ehCaminho(vector<int> caminho,int x,int y){
+    for(int i=0;i<caminho.size()-1;i++){
+        if(caminho[i]==x && caminho[i+1]==y)return true;
+        if(caminho[i]==y && caminho[i+1]==x)return true;
+    }
+
+    return false;
+}
+
+void atualizaMatriz(vector< vector<int> > formigas, vector<float>valor_caminhos,float** matriz,int nro_vertices){
+    float q=1.0;//FORÇA DO FEROMÕNIO
+    float fi = 0.5; //FORÇA DA EVAPORAÇÃO
+
+    for(int i=0;i<nro_vertices;i++){
+        for(int j=0;j<nro_vertices;j++){
+
+            float soma=0.0;
+
+            for(int k=0;k<formigas.size();k++){
+                if(ehCaminho(formigas[k],i,j)==true){
+                    soma+=(q/valor_caminhos[k]);
+                }
+            }
+
+            if(i!=j)matriz[i][j] = ( (1.0 - fi) * matriz[i][j] ) + soma;
+
+        }
+    }
+}
+
+void ACO_Geral(Grafo* G, float** mat){
+
+    vector< vector<int> > formigas;
+    vector<float> valor_caminhos;
+
+    for(int i=0;i<G->qtde_vertices;i++){
+        vector<int> caminho;
+
+        ACO(G,i,mat,caminho); //O PROBLEMA ACONTECE AQUI
+
+        formigas.push_back(caminho);
+        valor_caminhos.push_back(valorCaminho(G,caminho));
+    }
+
+    atualizaMatriz(formigas,valor_caminhos,mat,G->qtde_vertices);
+
 }
